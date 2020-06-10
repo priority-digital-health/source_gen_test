@@ -29,6 +29,7 @@ void testAnnotatedElements<T>(
   Map<String, GeneratorForAnnotation<T>> additionalGenerators,
   Iterable<String> expectedAnnotatedTests,
   Iterable<String> defaultConfiguration,
+  bool useDartFormatter = true,
 }) {
   for (var entry in getAnnotatedClasses<T>(
     libraryReader,
@@ -36,6 +37,7 @@ void testAnnotatedElements<T>(
     additionalGenerators: additionalGenerators,
     expectedAnnotatedTests: expectedAnnotatedTests,
     defaultConfiguration: defaultConfiguration,
+    useDartFormatter: useDartFormatter,
   )) {
     entry._registerTest();
   }
@@ -50,6 +52,7 @@ List<_AnnotatedTest> getAnnotatedClasses<T>(
   @required Map<String, GeneratorForAnnotation<T>> additionalGenerators,
   @required Iterable<String> expectedAnnotatedTests,
   @required Iterable<String> defaultConfiguration,
+  bool useDartFormatter = true,
 }) {
   final generators = <String, GeneratorForAnnotation<T>>{
     _defaultConfigurationName: defaultGenerator
@@ -166,6 +169,7 @@ List<_AnnotatedTest> getAnnotatedClasses<T>(
         configuration,
         entry.elementName,
         entry.expectation,
+        useDartFormatter: useDartFormatter,
       ));
     }
   }
@@ -195,6 +199,7 @@ class _AnnotatedTest<T> {
   final LibraryReader _libraryReader;
   final TestExpectation expectation;
   final String _elementName;
+  final bool useDartFormatter;
 
   String get _testName {
     var value = _elementName;
@@ -209,8 +214,9 @@ class _AnnotatedTest<T> {
     this.generator,
     this.configuration,
     this._elementName,
-    this.expectation,
-  );
+    this.expectation, {
+    this.useDartFormatter = true,
+  });
 
   void _registerTest() {
     if (expectation is ShouldGenerate) {
@@ -223,8 +229,12 @@ class _AnnotatedTest<T> {
     throw StateError('Should never get here.');
   }
 
-  Future<String> _generate() =>
-      generateForElement<T>(generator, _libraryReader, _elementName);
+  Future<String> _generate() => generateForElement<T>(
+        generator,
+        _libraryReader,
+        _elementName,
+        useDartFormatter: useDartFormatter,
+      );
 
   Future<void> _shouldGenerateTest() async {
     final output = await _generate();

@@ -18,8 +18,9 @@ final _testAnnotationWarnings = <String>{};
 Future<String> generateForElement<T>(
   GeneratorForAnnotation<T> generator,
   LibraryReader libraryReader,
-  String name,
-) async {
+  String name, {
+  bool useDartFormatter = true,
+}) async {
   final elements =
       libraryReader.allElements.where((e) => e.name == name).toList();
 
@@ -86,5 +87,5 @@ Future<String> generateForElement<T>(
 
   final generated = await generatedStream.join('\n\n');
 
-  return _formatter.format(generated);
+  return useDartFormatter ? _formatter.format(generated) : generated;
 }
