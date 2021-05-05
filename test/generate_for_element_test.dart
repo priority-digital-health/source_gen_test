@@ -22,7 +22,7 @@ import 'annotations.dart';
 @ShouldGenerate('', configurations: ['c'])
 @ShouldGenerate('', configurations: ['c'])
 @TestAnnotation()
-class TestClass() {}
+class TestClass{}
 """,
         'annotations.dart': _testAnnotationContent,
       }, 'bad_lib.dart');
@@ -44,7 +44,7 @@ import 'package:source_gen_test/annotations.dart';
 import 'annotations.dart';
 @ShouldGenerate('', configurations: [])
 @TestAnnotation()
-class EmptyConfig() {}
+class EmptyConfig{}
 """,
         'annotations.dart': _testAnnotationContent,
       }, 'bad_lib.dart');
@@ -325,27 +325,11 @@ const TestClass2NameLowerCase = testclass2;
           ),
         );
       });
-
-      test('key `null` not allowed', () {
-        expect(
-          () => testAnnotatedElements(
-            reader,
-            const TestGenerator(),
-            additionalGenerators: const {
-              null: TestGenerator(requireTestClassPrefix: false)
-            },
-          ),
-          _throwsArgumentError(
-            'Contained an unsupported key `null`.',
-            'additionalGenerators',
-          ),
-        );
-      });
     });
   });
 }
 
-Matcher _throwsArgumentError(matcher, [String name]) => throwsA(
+Matcher _throwsArgumentError(matcher, [String? name]) => throwsA(
       isArgumentError
           .having((e) => e.message, 'message', matcher)
           .having((ae) => ae.name, 'name', name),
